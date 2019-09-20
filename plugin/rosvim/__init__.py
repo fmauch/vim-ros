@@ -45,10 +45,19 @@ def buf_enter():
                 vimp.var['g:ros_catkin_make_options'])
     elif vimp.var['g:ros_build_system'] == 'catkin-tools':
         make_cmd = 'catkin build '
-    else:
+    elif vimp.var['g:ros_build_system'] == 'ros_make':
         make_cmd = 'rosmake '
+    else:
+        _path = packages[p].path
+        idx_src = _path.find('/src')
+        if idx_src > -1:
+            # Remove from the first '/src' to the end
+            catkin_ws = _path[:idx_src]
+        else:
+            catkin_ws = _path
+        make_cmd = 'cd ' + catkin_ws + ' && ' + vimp.var['g:ros_build_system']
     if vimp.var['g:ros_make'] == 'all':
-        vimp.opt['makeprg'] = make_cmd + ' '.join(packages.keys())
+        vimp.opt['makeprg'] = make_cmd
     else:
         vimp.opt['makeprg'] = make_cmd + p
 
